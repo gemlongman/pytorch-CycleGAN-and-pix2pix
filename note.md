@@ -1,15 +1,17 @@
 CAF face sketch
-测试cycle pix对edge 60的结果 得到较好的一个模型
+
+cycle sketch2 is better
+CycleGAN 反了？A=》B，那么A应该是简单的
 ok------------------------>
-加在服务器上
-测试cycle pix对ps2 60的结果 得到较好的一个模型 和图片风格
+
+
 水墨
 油画
-数据拷贝脚本
 批量测试
 研究参数
 
-#  cgan-face-generator
+
+# error  cgan-face-generator
 也许是torch版本不一致，模型数据没法用了，函数形参变了，所以需要自己训练吧 还是不对，应该是版本问题
 python server.py --dataroot ./datasets/gal  --name caf_pix2pix --model test --which_model_netG unet_256 --which_direction AtoB --dataset_mode single --norm batch
 python server.py --dataroot ./data/caf_pix  --name caf_pix --model test --which_model_netG unet_256 --which_direction AtoB --dataset_mode single --norm batch
@@ -37,11 +39,16 @@ python combine_A_and_B.py --fold_A caf\\sketch2 --fold_B caf\\face --fold_AB caf
 python train.py --dataroot ./datasets/caf_cycle --name caf_cycle --model cycle_gan
 python train.py --dataroot ./datasets/caf_pix --name caf_pix --model pix2pix --direction AtoB
 
-
 python train.py --dataroot ./datasets/cafsketch1_cycle --name cafsketch1_cycle --model cycle_gan
-*60files 200iters*67s 3.39hous*
+*60files 200iters*67s 3.39hous cpu:1400s for 1iter 60files*
 python train.py --dataroot ./datasets/cafsketch1_pix --name cafsketch1_pix --model pix2pix --direction AtoB
 *60files 200iters*7s 30min*
+
+python train.py --dataroot ./datasets/cafsketch2_cycle --name cafsketch2_cycle --model cycle_gan
+python train.py --dataroot ./datasets/cafsketch2_pix --name cafsketch2_pix --model pix2pix --direction AtoB
+
+---->
+python train.py --dataroot ./datasets/cafsketch2_cycle --name cafsketch2_cycle --model cycle_gan  --direction BtoA
 
 ### test：
 python test.py --dataroot ./datasets/caf_cycle --name caf_cycle --model cycle_gan
@@ -50,8 +57,14 @@ python test.py --dataroot ./datasets/cafsketch1_cycle/testB/ --name caf_pix --mo
 
 python test.py --dataroot ./datasets/cafsketch1_cycle --name cafsketch1_cycle --model cycle_gan
 python test.py --dataroot ./datasets/cafsketch1_pix --name cafsketch1_pix --model pix2pix --direction AtoB
-python test.py --dataroot ./datasets/cafsketch1_cycle/testB/ --name cafsketch1_pix --model test --netG unet_256 -dataset_mode single --norm batch
+python test.py --dataroot ./datasets/cafsketch1_cycle/testB/ --name cafsketch1_pix --model test --netG unet_256 --dataset_mode single --norm batch
 
+python test.py --dataroot ./datasets/cafsketch2_cycle --name cafsketch2_cycle --model cycle_gan
+python test.py --dataroot ./datasets/cafsketch2_pix/testB/ --name cafsketch2_pix --model test --netG unet_256 --dataset_mode single --norm batch
+
+---->
+python test.py --dataroot ./datasets/cafsketch2_cycle --name cafsketch2_cycle --model cycle_gan --direction BtoA
+python test.py --dataroot ./datasets/cafsketch2_cycle/testB --name cafsketch2_cycle --model test --no_dropout
 #bash all
 ```bash
 #!/bin/bash
@@ -109,7 +122,4 @@ function runall(){
 ```
 
 ###
-python随机选取10000张图片并复制到另一个文件夹中
-https://blog.csdn.net/weixin_40769885/article/details/82869760
-python实现从一个文件夹下随机抽取一定数量的图片并移动到另一个文件夹
-https://blog.csdn.net/weixin_40769885/article/details/82869760
+
