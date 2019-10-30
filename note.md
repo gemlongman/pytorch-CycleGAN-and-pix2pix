@@ -1,70 +1,78 @@
 CAF face sketch
 
 cycle sketch2 is better
-CycleGAN 反了？A=》B，那么A应该是简单的
-ok------------------------>
+CycleGAN A=》B，A应该是简单的
+
+------------------------>
 
 
-水墨
-油画
-批量测试
-研究参数
+# Fire up `visdom` server 
+for visualization at 
+http://localhost:8097
 
+```
+conda activate py35
+python -m visdom.server
 
-# error  cgan-face-generator
-也许是torch版本不一致，模型数据没法用了，函数形参变了，所以需要自己训练吧 还是不对，应该是版本问题
-python server.py --dataroot ./datasets/gal  --name caf_pix2pix --model test --which_model_netG unet_256 --which_direction AtoB --dataset_mode single --norm batch
-python server.py --dataroot ./data/caf_pix  --name caf_pix --model test --which_model_netG unet_256 --which_direction AtoB --dataset_mode single --norm batch
-python server.py --dataroot ./data/caf_pix  --name caf_pix --model test --which_direction AtoB --dataset_mode single
+rm -rf 
+checkpoints results gygit/test/caf_ 
+
+```
+--------------------------------------------------------------------------
 
 # pytorch-CycleGAN-and-pix2pix
-##example
-python test.py --dataroot datasets/monet2photo/testA --name monet2photo_pretrained --model test --no_dropout
+pip install -r requirements.txt 
+conda install pytorch torchvision cudatoolkit=9.0 -c pytorch
 
-### data
+# CycleGAN
+
+## data
 CycleGAN:
 trainA trainB
 testA testB
 
+## train
+python train.py --dataroot ~/gygit/test/caf_cycle/caf_cycle --name caf_cycle --model cycle_gan
+*60files 200iters*67s 3.39hous cpu:1400s for 1iter 60files*
+python train.py --dataroot ./gygit/test/caf_cycle/cafsketch2_cycle --name cafsketch2_cycle --model cycle_gan  --direction BtoA
+
+## test：
+python test.py --dataroot ./gygit/test/caf_cycle/cafsketch1_cycle --name cafsketch1_cycle --model cycle_gan
+
+python test.py --dataroot ./gygit/test/caf_cycle/cafsketch2_cycle --name cafsketch2_cycle --model cycle_gan --direction BtoA
+
+python test.py --dataroot ./gygit/test/caf_/cafsketch1_cycle/testB/ --name cafsketch1_pix --model test --netG unet_256 --dataset_mode single --norm batch
+
+--------------------------------------------------------------------------
+
+#pix2pix
+
+## data
 pix2pix: combine_A_and_B
 train val 
 test
 一对一关系 A => B
-datasets/
+gygit/test/caf_/
 python combine_A_and_B.py --fold_A caf\\edges --fold_B caf\\face --fold_AB caf\\train
-python combine_A_and_B.py --fold_A caf\\sketch1 --fold_B caf\\face --fold_AB cafsketch1_pix\\train
-python combine_A_and_B.py --fold_A caf\\sketch2 --fold_B caf\\face --fold_AB cafsketch2_pix\\train
 
-### train
-python train.py --dataroot ./datasets/caf_cycle --name caf_cycle --model cycle_gan
-python train.py --dataroot ./datasets/caf_pix --name caf_pix --model pix2pix --direction AtoB
+## train
 
-python train.py --dataroot ./datasets/cafsketch1_cycle --name cafsketch1_cycle --model cycle_gan
-*60files 200iters*67s 3.39hous cpu:1400s for 1iter 60files*
-python train.py --dataroot ./datasets/cafsketch1_pix --name cafsketch1_pix --model pix2pix --direction AtoB
+python train.py --dataroot ./gygit/test/caf_/caf_pix --name caf_pix --model pix2pix --direction AtoB
+
 *60files 200iters*7s 30min*
 
-python train.py --dataroot ./datasets/cafsketch2_cycle --name cafsketch2_cycle --model cycle_gan
-python train.py --dataroot ./datasets/cafsketch2_pix --name cafsketch2_pix --model pix2pix --direction AtoB
+## test：
 
----->
-python train.py --dataroot ./datasets/cafsketch2_cycle --name cafsketch2_cycle --model cycle_gan  --direction BtoA
+python test.py --dataroot ./gygit/test/caf_/caf_pix --name caf_pix --model pix2pix --direction AtoB
 
-### test：
-python test.py --dataroot ./datasets/caf_cycle --name caf_cycle --model cycle_gan
-python test.py --dataroot ./datasets/caf_pix --name caf_pix --model pix2pix --direction AtoB
-python test.py --dataroot ./datasets/cafsketch1_cycle/testB/ --name caf_pix --model test --netG unet_256 --dataset_mode single --norm batch
+python test.py --dataroot ./gygit/test/caf_/cafsketch2_pix/testB/ --name cafsketch2_pix --model test --netG unet_256 --dataset_mode single --norm batch
 
-python test.py --dataroot ./datasets/cafsketch1_cycle --name cafsketch1_cycle --model cycle_gan
-python test.py --dataroot ./datasets/cafsketch1_pix --name cafsketch1_pix --model pix2pix --direction AtoB
-python test.py --dataroot ./datasets/cafsketch1_cycle/testB/ --name cafsketch1_pix --model test --netG unet_256 --dataset_mode single --norm batch
+python test.py --dataroot ./gygit/test/caf_/cafsketch2_cycle/testB --name cafsketch2_cycle --model test --no_dropout
 
-python test.py --dataroot ./datasets/cafsketch2_cycle --name cafsketch2_cycle --model cycle_gan
-python test.py --dataroot ./datasets/cafsketch2_pix/testB/ --name cafsketch2_pix --model test --netG unet_256 --dataset_mode single --norm batch
+--------------------------------------------------------------------------
+##example
+python test.py --dataroot gygit/test/caf_/monet2photo/testA --name monet2photo_pretrained --model test --no_dropout
 
----->
-python test.py --dataroot ./datasets/cafsketch2_cycle --name cafsketch2_cycle --model cycle_gan --direction BtoA
-python test.py --dataroot ./datasets/cafsketch2_cycle/testB --name cafsketch2_cycle --model test --no_dropout
 #bash all
 ```bash
 #!/bin/bash
@@ -76,7 +84,7 @@ function runpix(){
     dir="($*)_pix"
     #train
     StartTime=$(date +%s.%N)
-    python train.py --dataroot ./datasets/${dir} --name ${dir} --model pix2pix --direction BtoA
+    python train.py --dataroot ./gygit/test/caf_/${dir} --name ${dir} --model pix2pix --direction BtoA
     Endtime=$(date +%s.%N)
 
     start_s=$(echo $StartTime | cut -d '.' -f 1)  
@@ -87,8 +95,8 @@ function runpix(){
     printf "pix2pix dir $dir\t $time ms \n" >> $LOG_FILE
 
     #test
-    #python test.py --dataroot ./datasets/${dir} --name ${dir} --model pix2pix --direction AtoB
-    python test.py --dataroot ./datasets/($*)_cycle/testB/ --name ${dir} --model test --netG unet_256 --dataset_mode single --norm batch
+    #python test.py --dataroot ./gygit/test/caf_/${dir} --name ${dir} --model pix2pix --direction AtoB
+    python test.py --dataroot ./gygit/test/caf_/($*)_cycle/testB/ --name ${dir} --model test --netG unet_256 --dataset_mode single --norm batch
 }
 
 
@@ -96,7 +104,7 @@ function runcycle(){
     dir="($*)_cycle"
     #train
     StartTime=$(date +%s.%N)
-    python train.py --dataroot ./datasets/${dir} --name ${dir} --model cycle_gan
+    python train.py --dataroot ./gygit/test/caf_/${dir} --name ${dir} --model cycle_gan
     Endtime=$(date +%s.%N)
 
     start_s=$(echo $StartTime | cut -d '.' -f 1)  
@@ -107,9 +115,9 @@ function runcycle(){
     printf "cycle_gan dir $dir\t $time ms \n" >> $LOG_FILE
 
     #test
-    python test.py --dataroot ./datasets/${dir} --name ${dir} --model cycle_gan
-    #python test.py --dataroot ./datasets/${dir}/testA --name ${dir} --model test --no_dropout
-    #python test.py --dataroot ./datasets/${dir}/testB --name ${dir} --model test --no_dropout
+    python test.py --dataroot ./gygit/test/caf_/${dir} --name ${dir} --model cycle_gan
+    #python test.py --dataroot ./gygit/test/caf_/${dir}/testA --name ${dir} --model test --no_dropout
+    #python test.py --dataroot ./gygit/test/caf_/${dir}/testB --name ${dir} --model test --no_dropout
 }
 
 function runall(){
@@ -118,8 +126,4 @@ function runall(){
         runcycle $d
     done
 }
-
-```
-
-###
 

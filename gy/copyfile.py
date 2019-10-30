@@ -5,19 +5,12 @@ from face,sketch to trainA,trainB
 before copy will remove target
 suchas
 fromDirs=['datasets/caf/face' ,'datasets/caf/sketch1' ,'datasets/caf/sketch2' ]
-#fromSuffixs=['','','']
 toDirs=['datasets/s2f/trainA' ,'datasets/s2f/trainB' ,'datasets/caf/facetest3' ]
-#toSuffixs=['','','']
-filesNum=60
 
 """
 
 import  os, random, shutil
-#from options.test_options import TestOptions
-#from data import create_dataset
-#from models import create_model
-#from util.visualizer import save_images
-#from util import html
+
 
 fromDirs = ['datasets/caf/face' , 'datasets/caf/sketch1']
 
@@ -25,6 +18,7 @@ toDirs = ['datasets/s2f/trainA' , 'datasets/s2f/trainB']
 
 filesNum = 60
 
+#maybe useful in case copy 20% file for val or test
 def copyFile(fromDir,toDir,num,deleteTargetOld=1):
         pathDir = os.listdir(fromDir)    #取图片的原始路径
         
@@ -71,7 +65,7 @@ def multiDirSameFilesCopy(fromDirS,toDirS,num,deleteOld=1):
     #make sure mini file number    
     minFiles=0
     minDirPath=''
-    #pathDirS=[]
+    #pathDirS=[]useless
     for onedir in fromDirS:
         pathDir = os.listdir(onedir)
         #pathDirS.append(pathDir)
