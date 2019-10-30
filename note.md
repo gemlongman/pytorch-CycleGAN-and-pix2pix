@@ -6,11 +6,6 @@ CycleGAN A=》B，A应该是简单的
 ------------------------>
 
 
-水墨
-油画
-批量测试
-研究参数
-
 # Fire up `visdom` server 
 for visualization at 
 http://localhost:8097
@@ -30,7 +25,7 @@ pip install -r requirements.txt
 conda install pytorch torchvision cudatoolkit=9.0 -c pytorch
 pip install opencv-python
 
-#CycleGAN
+# CycleGAN
 
 ## data
 CycleGAN:
